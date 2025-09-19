@@ -1,0 +1,45 @@
+Metadata-Version: 2.1
+Name: django-otp-yubikey
+Version: 1.0.1
+Summary: A django-otp plugin that verifies YubiKey OTP tokens.
+Home-page: https://github.com/django-otp/django-otp-yubikey
+Author: Peter Sagerson
+Author-email: psagers@ignorare.net
+License: BSD
+Project-URL: Documentation, https://django-otp-yubikey.readthedocs.io/
+Project-URL: Source, https://github.com/django-otp/django-otp-yubikey
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Topic :: Security
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Framework :: Django
+License-File: LICENSE
+Requires-Dist: django-otp (>=1.0.0)
+Requires-Dist: YubiOTP (>=0.2.2)
+
+.. image:: https://img.shields.io/pypi/v/django-otp-yubikey?color=blue
+   :target: https://pypi.org/project/django-otp-yubikey/
+   :alt: PyPI
+.. image:: https://img.shields.io/readthedocs/django-otp-yubikey
+   :target: https://django-otp-yubikey.readthedocs.io/
+   :alt: Documentation
+.. image:: https://img.shields.io/badge/github-django--agent--trust-green
+   :target: https://github.com/django-otp/django-otp-yubikey
+   :alt: Source
+
+This is a django-otp plugin that handles `YubiKey
+<https://www.yubico.com/yubikey>`_ devices using the Yubico OTP algorithm. This
+includes two device definitions: one to verify YubiKey tokens locally and
+another to verify them against a `web service
+<https://www.yubico.com/yubicloud>`_.
+
+See `django-otp <https://pypi.org/project/django-otp>`_ for more information on
+the OTP framework.
+
+.. _upgrade notes: https://django-otp-yubikey.readthedocs.io/#upgrading
+
+

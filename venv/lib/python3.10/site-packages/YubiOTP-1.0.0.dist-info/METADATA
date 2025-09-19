@@ -1,0 +1,44 @@
+Metadata-Version: 2.1
+Name: YubiOTP
+Version: 1.0.0
+Summary: A library for verifying YubiKey OTP tokens, both locally and through a Yubico web service.
+Home-page: https://github.com/django-otp/yubiotp
+Author: Peter Sagerson
+Author-email: psagers@ignorare.net
+License: BSD
+Project-URL: Documentation, https://yubiotp.readthedocs.io/
+Project-URL: Source, https://github.com/django-otp/yubiotp
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Topic :: Security
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Requires-Dist: pycryptodome
+
+.. image:: https://img.shields.io/pypi/v/yubiotp?color=blue
+   :target: https://pypi.org/project/yubiotp/
+   :alt: PyPI
+.. image:: https://img.shields.io/readthedocs/yubiotp
+   :target: https://yubiotp.readthedocs.io/
+   :alt: Documentation
+.. image:: https://img.shields.io/badge/github-yubiotp-green
+   :target: https://github.com/django-otp/yubiotp
+   :alt: Source
+
+This is a library for verifying `YubiKey <https://www.yubico.com/>`_ OTP tokens.
+It includes both the low-level implementation for verifying tokens locally and
+clients for multiple versions of the Yubico validation web service. The primary
+audience is developers who wish to verify YubiKey tokens in their applications,
+presumably as part of a multi-factor authentication scheme.
+
+For testing and experimenting, the included ``yubikey`` script simulates one or
+more YubiKey devices using a config file. It also includes utility commands
+such as a modhex converter. See ``yubikey -h`` for details.
+
+This also includes a command-line web service client called ``yubiclient``. See
+``yubiclient -h`` for details.
+
+

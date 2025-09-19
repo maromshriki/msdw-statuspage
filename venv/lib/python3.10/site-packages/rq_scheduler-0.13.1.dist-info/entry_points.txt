@@ -1,0 +1,2 @@
+[console_scripts]
+rqscheduler = rq_scheduler.scripts.rqscheduler:main
