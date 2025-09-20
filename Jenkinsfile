@@ -66,9 +66,10 @@ pipeline {
               sh """
                  ssh-keyscan -t rsa,dsa $PROD_SERVER >> ~/.ssh/known_hosts
                  ssh $PROD_USER@$PROD_SERVER
+                 cd k8s2
                  set -e
                  kubectl set image deployment/web *=$REMOTE_REGISTRY:v$BUILD_NUMBER
-                 kubectl apply -f deployment/web
+                 kubectl apply -f deploy-web.yml
                  kubectl rollout status deployment/web
             
                  """
