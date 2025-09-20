@@ -44,7 +44,7 @@ pipeline {
       when { changeRequest() }
       steps {
         sshagent(credentials: ["$SSH_CREDENTIALS_ID_DEV"]) {
-          sh  "ssh -t $DEV_USER@$DEV_SERVER 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 992382545251.dkr.ecr.us-east-1.amazonaws.com; docker tag msdw/status-page $REMOTE_REGISTRY:pr-${CHANGE_ID}; docker push $REMOTE_REGISTRY:pr-${CHANGE_ID};'"
+          sh  "ssh -t $DEV_USER@$DEV_SERVER 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 992382545251.dkr.ecr.us-east-1.amazonaws.com; docker tag msdw/statuspage-web $REMOTE_REGISTRY:pr-${CHANGE_ID}; docker push $REMOTE_REGISTRY:pr-${CHANGE_ID};'"
         }
       }
     }
@@ -73,7 +73,7 @@ pipeline {
                  kubectl apply -f ~/k8s2;\
                  kubectl set image deployment/status-page status-page=$REMOTE_REGISTRY:latest;\
                  kubectl rollout status deployment/status-page
-            '
+            
           """
         } catch (err) {
           echo "Deployment failed! Rolling back..."
