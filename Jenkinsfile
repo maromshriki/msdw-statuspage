@@ -76,11 +76,7 @@ pipeline {
           """
         } catch (err) {
           echo "Deployment failed! Rolling back..."
-          sh """
-            ssh -t $PROD_USER@$PROD_SERVER '
-              kubectl rollout undo deployment/status-page
-            '
-          """
+          sh "ssh -t $PROD_USER@$PROD_SERVER kubectl rollout undo deployment/status-page'"
           error("Rollback executed due to failure.")
         }
       }
@@ -97,3 +93,4 @@ pipeline {
     }
   }
 }
+
