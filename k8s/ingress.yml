@@ -1,0 +1,37 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: web-ingress
+  namespace: statuspage
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"  # Redirect אוטומטי ל-HTTPS
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - web.msdw-statuspage.click
+      secretName: statuspage-tls
+  rules:
+    - host: web.msdw-statuspage.click
+      http:
+        paths:
+          # Static assets: WhiteNoise מטפל בקבצי CSS, JS, תמונות ישירות מה־Django
+          - path: /static/
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: web
+                port:
+                  number: 8000
+          # כל השאר (ה־web הראשי)
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web
+                port:
+                  number: 8000
+
+

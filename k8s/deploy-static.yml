@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-static-files
+  namespace: statuspage
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: static-files
+  template:
+    metadata:
+      labels:
+        app: static-files
+    spec:
+      imagePullSecrets:
+        - name: ecr-cred
+      volumes:
+        - name: static-volume
+          emptyDir: {}   # Volume זמני עבור static files
+      containers:
+        - name: static-nginx
+          image: 992382545251.dkr.ecr.us-east-1.amazonaws.com/msdw/statuspage-nginx:latest
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: static-volume
+              mountPath: /opt/status-page/statuspage/static/
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-serving
+  namespace: statuspage
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: static-files
+
+
