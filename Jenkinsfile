@@ -34,8 +34,9 @@ pipeline {
     stage('Dev Deploy to Minikube') {
       when { changeRequest() }
       steps {
-        sshagent(credentials: ["$SSH_CREDENTIALS_ID_DEV"]) {
-          sh "ssh -t $DEV_USER@$DEV_SERVER 'docker run --rm $REMOTE_REGISTRY:dev-latest'"
+        shagent(credentials: ["$SSH_CREDENTIALS_ID_DEV"]) {
+          sh "ssh -t $DEV_USER@$DEV_SERVER 'docker run -d --rm $REMOTE_REGISTRY:dev-latest | { read cid; sleep 1; docker kill $cid; }
+'"
         }
       }
     }
