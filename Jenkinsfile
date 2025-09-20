@@ -35,6 +35,7 @@ pipeline {
       when { changeRequest() }
       steps {
         shagent(credentials: ["$SSH_CREDENTIALS_ID_DEV"]) {
+          sh "ssh-keyscan -t rsa,dsa $DEV_SERVER >> ~/.ssh/known_hosts"
           sh "ssh -t $DEV_USER@$DEV_SERVER 'docker run -d --rm msdw/statuspage-web'"
         }
       }
