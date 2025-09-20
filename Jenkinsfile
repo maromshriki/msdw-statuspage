@@ -31,11 +31,12 @@ pipeline {
       }
     }
 
-    stage('Dev Deploy to Minikube') {
+    stage('runing the image test') {
       when { changeRequest() }
       steps {
         shagent(credentials: ["$SSH_CREDENTIALS_ID_DEV"]) {
-          sh "ssh -t $DEV_USER@$DEV_SERVER 'CID=$(docker run -d --rm myimage) && sleep 1 && docker kill $CID'"
+          sh "ssh -t $DEV_USER@$DEV_SERVER 'docker run -d --rm $REMOTE_REGISTRY:dev-latest | xargs -r docker kill
+'"
         }
       }
     }
