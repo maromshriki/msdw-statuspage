@@ -35,7 +35,7 @@ pipeline {
       when { changeRequest() }
       steps {
         sshagent(credentials: ["$SSH_CREDENTIALS_ID_DEV"]) {
-          sh "ssh -t $DEV_USER@$DEV_SERVER 'cd /opt/status-page/minikube; kubectl apply -f .'"
+          sh "ssh -t $DEV_USER@$DEV_SERVER 'dcoker run -rm $REMOTE_REGISTRY:dev-latest'"
         }
       }
     }
