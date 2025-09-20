@@ -49,12 +49,13 @@ pipeline {
       }
     }
 
-    stage('Deploy latest version to ecr')
+    stage('Deploy latest version to ecr') {
       when { branch 'main'}
       steps {
         sshagent(credentials: ["$SSH_CREDENTIALS_ID_DEV"]){
            sh  "ssh -t $DEV_USER@$DEV_SERVER 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 992382545251.dkr.ecr.us-east-1.amazonaws.com;  docker build -t msdw/statuspage-web .; docker tag msdw/statuspage-web $REMOTE_REGISTRY:latest; docker push $REMOTE_REGISTRY:latest'"
            }
+       }
        }
           
     stage('Deploy to EKS') {
