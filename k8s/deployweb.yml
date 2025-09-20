@@ -4,7 +4,7 @@ metadata:
   name: web
   namespace: statuspage
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: web
@@ -17,19 +17,10 @@ spec:
         - name: ecr-cred
       containers:
         - name: web
-          image: 992382545251.dkr.ecr.us-east-1.amazonaws.com/msdw/statuspage-web:latest
-          command: ["python3", "statuspage/manage.py", "runserver", "0.0.0.0:8000", "--insecure"]
-          env:
-            - name: REDIS_URL
-              value: redis://redis:6379/0
-            - name: POSTGRES_DB
-              value: statuspage
-            - name: POSTGRES_USER
-              value: statuspage
-            - name: POSTGRES_PASSWORD
-              value: statuspagemsdw
-            - name: POSTGRES_HOST
-              value: postgres
+          image: 992382545251.dkr.ecr.us-east-1.amazonaws.com/msdw/statuspage-web:devlatest
+          envFrom:
+            - secretRef:
+                name: db-redis-secret
           ports:
             - containerPort: 8000
 ---
@@ -41,7 +32,9 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - port: 8000      
-      targetPort: 8000 
+    - port: 80
+      targetPort: 8000
   selector:
     app: web
+
+
