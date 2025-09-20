@@ -35,7 +35,7 @@ pipeline {
       when { changeRequest() }
       steps {
         sshagent(credentials: ["$SSH_CREDENTIALS_ID_DEV"]) {
-          sh "ssh -t $DEV_USER@$DEV_SERVER 'docker run -rm $REMOTE_REGISTRY:dev-latest'"
+          sh "ssh -t $DEV_USER@$DEV_SERVER 'docker run --rm $REMOTE_REGISTRY:dev-latest'"
         }
       }
     }
