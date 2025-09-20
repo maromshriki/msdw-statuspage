@@ -3,11 +3,11 @@ pipeline {
 
   environment {
     IMAGE_NAME_WEB = "msdw-mbp_main-web"
-    PROD_SERVER = "10.0.12.164"
+    PROD_SERVER = "10.0.21.29"
     PROD_USER = "ec2-user"
-    DEV_SERVER = "10.0.2.14"
+    DEV_SERVER = "10.0.28.126"
     DEV_USER = "ubuntu"
-    CICD_SERVER = "10.0.1.205"
+    CICD_SERVER = "10.0.24.168"
     CICD_USER = "ec2-user"
     SSH_CREDENTIALS_ID_PROD = 'ssh-ekscontrol'
     SSH_CREDENTIALS_ID_DEV = 'ssh-to-dev-server'
@@ -50,29 +50,39 @@ pipeline {
     }
 
 
-    stage('Deploy to EKS') {
-      when { branch 'main' }
-      steps {
-        sshagent(credentials: ["$SSH_CREDENTIALS_ID_PROD"]) {
-          script {
-            try {
-              sh "ssh-keyscan -t rsa,dsa $PROD_SERVER >> ~/.ssh/known_hosts"
-              sh "ssh $PROD_USER@$PROD_SERVER"
-              sh """
-                kubectl apply -f k8s/
-                kubectl set image deployment/status-page status-page=$REMOTE_REGISTRY:latest 
-                kubectl rollout status deployment/status-page
-              """
-            } catch (err) {	
-              echo "Deployment failed! Rolling back..."
-              sh "kubectl rollout undo deployment/status-page"
-              error("Rollback executed due to failure.")
-            }
-          }
+stage('Deploy to EKS') {
+  when { branch 'main' }
+  steps {
+    sshagent(credentials: ["$SSH_CREDENTIALS_ID_PROD"]) {
+      script {
+        try {
+          sh "ssh-keyscan -t rsa,dsa $PROD_SERVER >> ~/.ssh/known_hosts"
+
+          sh """
+            ssh -t $PROD_USER@$PROD_SERVER '
+              set -e
+              aws eks --region us-east-1 update-kubeconfig --name your-eks-cluster
+
+              kubectl apply -f ~/k8s2
+
+              kubectl set image deployment/status-page status-page=$REMOTE_REGISTRY:latest
+
+              kubectl rollout status deployment/status-page
+            '
+          """
+        } catch (err) {
+          echo "Deployment failed! Rolling back..."
+          sh """
+            ssh -t $PROD_USER@$PROD_SERVER '
+              kubectl rollout undo deployment/status-page
+            '
+          """
+          error("Rollback executed due to failure.")
         }
       }
     }
   }
+}
 
   post {
     failure {
