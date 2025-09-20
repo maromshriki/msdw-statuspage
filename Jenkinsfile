@@ -35,8 +35,7 @@ pipeline {
       when { changeRequest() }
       steps {
         shagent(credentials: ["$SSH_CREDENTIALS_ID_DEV"]) {
-          sh "ssh -t $DEV_USER@$DEV_SERVER 'docker run -d --rm $REMOTE_REGISTRY:dev-latest | { read cid; sleep 1; docker kill $cid; }
-'"
+          sh "ssh -t $DEV_USER@$DEV_SERVER 'CID=$(docker run -d --rm myimage) && sleep 1 && docker kill $CID'"
         }
       }
     }
