@@ -56,43 +56,36 @@ pipeline {
            sh  "ssh -t $DEV_USER@$DEV_SERVER 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 992382545251.dkr.ecr.us-east-1.amazonaws.com;  docker build -t msdw/statuspage-web .; docker tag msdw/statuspage-web $REMOTE_REGISTRY:latest; docker push $REMOTE_REGISTRY:latest'"
            }
        }
-       }
+     }
           
     stage('Deploy to EKS') {
       when { branch 'main' }
       steps {
         sshagent(credentials: ["$SSH_CREDENTIALS_ID_PROD"]) {
           script {
-            try {
-              sh "ssh-keyscan -t rsa,dsa $PROD_SERVER >> ~/.ssh/known_hosts"
-
               sh """
-                 ssh -t $PROD_USER@$PROD_SERVER '\
-                 set -e;\
-                 aws eks --region us-east-1 update-kubeconfig --name your-eks-cluster;\
-                 kubectl apply -f ~/k8s2;\
-                 kubectl set image deployment/status-page status-page=$REMOTE_REGISTRY:latest;\
-                 kubectl rollout status deployment/status-page
+                 ssh-keyscan -t rsa,dsa $PROD_SERVER >> ~/.ssh/known_hosts
+                 ssh $PROD_USER@$PROD_SERVER
+                 set -e
+                 aws eks --region us-east-1 update-kubeconfig --name msdw-eks
+                 kubectl set image deployment/web $REMOTE_REGISTRY:latest
+                 kubectl apply -f deployment/web
+                 kubectl rollout status deployment/web
             
-          """
-        } catch (err) {
-          echo "Deployment failed! Rolling back..."
-          sh "ssh -t $PROD_USER@$PROD_SERVER kubectl rollout undo deployment/status-page'"
-          error("Rollback executed due to failure.")
+                 """
+                 }
+              }
+           }
+         }
+    post {
+      failure {
+        echo "Deployment failed! Rolling back..."
+        sh "ssh -t $PROD_USER@$PROD_SERVER 'kubectl rollout undo deployment/web'"
+        error("Rollback executed due to failure.")
           }
         }
-      }
     }
-  }
-}
+ }
+  
 
-post {
-  failure {
-    slackSend(channel: "${SLACK_CHANNEL}", message: "Pipeline failed for ${env.JOB_NAME} #${env.BUILD_NUMBER}")
-    }
-  success {
-    slackSend(channel: "${SLACK_CHANNEL}", message: "Pipeline succeeded for ${env.JOB_NAME} #${env.BUILD_NUMBER}")
-    }
-  }
-}
 
