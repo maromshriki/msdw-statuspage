@@ -53,7 +53,7 @@ pipeline {
       when { branch 'main'}
       steps {
         sshagent(credentials: ["$SSH_CREDENTIALS_ID_DEV"]){
-           sh  "ssh -t $DEV_USER@$DEV_SERVER 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 992382545251.dkr.ecr.us-east-1.amazonaws.com;  docker build -t msdw/statuspage-web .; docker tag msdw/statuspage-web $REMOTE_REGISTRY:latest; docker push $REMOTE_REGISTRY:latest'"
+          sh  "ssh -t $DEV_USER@$DEV_SERVER 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 992382545251.dkr.ecr.us-east-1.amazonaws.com;  docker build -t msdw/statuspage-web .; docker tag msdw/statuspage-web $REMOTE_REGISTRY:v$BUILD_NUMBER; docker push $REMOTE_REGISTRY:v$BUILD_NUMBER'"
            }
        }
      }
@@ -67,8 +67,7 @@ pipeline {
                  ssh-keyscan -t rsa,dsa $PROD_SERVER >> ~/.ssh/known_hosts
                  ssh $PROD_USER@$PROD_SERVER
                  set -e
-                 aws eks --region us-east-1 update-kubeconfig --name msdw-eks
-                 kubectl set image deployment/web $REMOTE_REGISTRY:latest
+                 kubectl set image deployment/web *=$REMOTE_REGISTRY:v$BUILD_NUMBER
                  kubectl apply -f deployment/web
                  kubectl rollout status deployment/web
             
