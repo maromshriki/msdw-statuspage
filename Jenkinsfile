@@ -76,14 +76,15 @@ pipeline {
                  }
               }
            }
-         }
-    post {
-      failure {
-        echo "Deployment failed! Rolling back..."
-        sh "ssh -t $PROD_USER@$PROD_SERVER 'kubectl rollout undo deployment/web'"
-        error("Rollback executed due to failure.")
+         
+      post {
+        failure {
+          echo "Deployment failed! Rolling back..."
+          sh "ssh -t $PROD_USER@$PROD_SERVER 'kubectl rollout undo deployment/web'"
+          error("Rollback executed due to failure.")
           }
         }
+      }
     }
  }
   
