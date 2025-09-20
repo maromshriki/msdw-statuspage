@@ -35,8 +35,7 @@ pipeline {
       when { changeRequest() }
       steps {
         shagent(credentials: ["$SSH_CREDENTIALS_ID_DEV"]) {
-          sh "ssh -t $DEV_USER@$DEV_SERVER 'docker run -d --rm $REMOTE_REGISTRY:dev-latest | xargs -r docker kill
-'"
+          sh "ssh -t $DEV_USER@$DEV_SERVER 'docker run -d --rm $REMOTE_REGISTRY:dev-latest | xargs -r docker kill'"
         }
       }
     }
