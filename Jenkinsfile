@@ -26,7 +26,7 @@ pipeline {
         sshagent(credentials: ["$SSH_CREDENTIALS_ID_DEV"]) {
           sh '[ -d ~/.ssh ] || mkdir ~/.ssh && chmod 0777 ~/.ssh'
           sh "ssh-keyscan -t rsa,dsa $DEV_SERVER >> ~/.ssh/known_hosts"
-          sh "ssh -t $DEV_USER@$DEV_SERVER 'cd /opt/status-page; docker build -t msdw/statuspage-web .; aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 992382545251.dkr.ecr.us-east-1.amazonaws.com; docker tag msdw/statuspage-web $REMOTE_REGISTRY:dev-latest; docker push $REMOTE_REGISTRY:dev-latest'"
+          sh "ssh -t $DEV_USER@$DEV_SERVER 'cd /opt/msdw-statuspage; docker build -t msdw/statuspage-web .; aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 992382545251.dkr.ecr.us-east-1.amazonaws.com; docker tag statuspage-web $REMOTE_REGISTRY:dev-latest; docker push $REMOTE_REGISTRY:dev-latest'"
         }
       }
     }
@@ -35,7 +35,7 @@ pipeline {
       when { changeRequest() }
       steps {
         shagent(credentials: ["$SSH_CREDENTIALS_ID_DEV"]) {
-          sh "ssh -t $DEV_USER@$DEV_SERVER 'docker run -d --rm $REMOTE_REGISTRY:dev-latest'"
+          sh "ssh -t $DEV_USER@$DEV_SERVER 'docker run -d --rm msdw/statuspage-web'"
         }
       }
     }
