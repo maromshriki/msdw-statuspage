@@ -34,7 +34,7 @@ pipeline {
     stage('runing the image test') {
       when { changeRequest() }
       steps {
-        shagent(credentials: ["$SSH_CREDENTIALS_ID_DEV"]) {
+        sshagent(credentials: ["$SSH_CREDENTIALS_ID_DEV"]) {
           sh "ssh -t $DEV_USER@$DEV_SERVER 'docker run -d --rm msdw/statuspage-web'"
         }
       }
