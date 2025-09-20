@@ -79,19 +79,20 @@ pipeline {
           echo "Deployment failed! Rolling back..."
           sh "ssh -t $PROD_USER@$PROD_SERVER kubectl rollout undo deployment/status-page'"
           error("Rollback executed due to failure.")
+          }
         }
       }
     }
   }
-  }
+}
 
-  post {
-    failure {
-      slackSend(channel: "${SLACK_CHANNEL}", message: "Pipeline failed for ${env.JOB_NAME} #${env.BUILD_NUMBER}")
+post {
+  failure {
+    slackSend(channel: "${SLACK_CHANNEL}", message: "Pipeline failed for ${env.JOB_NAME} #${env.BUILD_NUMBER}")
     }
-    success {
-      slackSend(channel: "${SLACK_CHANNEL}", message: "Pipeline succeeded for ${env.JOB_NAME} #${env.BUILD_NUMBER}")
+  success {
+    slackSend(channel: "${SLACK_CHANNEL}", message: "Pipeline succeeded for ${env.JOB_NAME} #${env.BUILD_NUMBER}")
     }
   }
 }
-}
+
