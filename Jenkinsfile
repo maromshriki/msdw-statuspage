@@ -63,7 +63,7 @@ pipeline {
       when { branch 'main' }
       steps {
         sshagent(credentials: ["$SSH_CREDENTIALS_ID_PROD"]) {
-          sh "ssh-keyscan -t rsa,dsa $PROD_SERVER >> ~/.ssh/known_hosts"
+          sh "ssh-keyscan $PROD_SERVER >> ~/.ssh/known_hosts"
           sh "ssh -t $PROD_USER@$PROD_SERVER 'kubectl set image deployment/web *=$REMOTE_REGISTRY:v$BUILD_NUMBER; kubectl rollout status deployment/web'"     
                  }
               }
